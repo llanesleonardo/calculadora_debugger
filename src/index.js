@@ -141,3 +141,4 @@ reset.addEventListener("click", () => {
   action = undefined;
 });
 
+console.log("refactorizando codigo");
