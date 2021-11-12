@@ -35,6 +35,9 @@ const OPERATIONS = {
   "/": (first, second) => Big(first).div(Big(second))
 };
 
+operations.forEach(operation =>{
+  
+});
 
 
 // Function to get results calculated and displayed.
