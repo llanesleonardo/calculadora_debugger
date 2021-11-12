@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Playground</title>
+	<script src="https://cdn.jsdelivr.net/npm/big.js@5.0.3/big.min.js">
+
+	</script>
+</head>
+<style>
+	.container {
+		display: grid;
+		grid-template-columns: 90px 90px 90px 90px;
+		grid-gap: 10px;
+	}
+
+	.button {
+		font-size: 30px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid lightgray;
+		height: 3em;
+		width: 3em;
+		border-radius: 0.5rem;
+		font-family: sans-serif, Helvetica;
+		cursor: pointer;
+		transition: background-color 0.1s;
+		user-select: none;
+	}
+
+	.button:hover {
+		background-color: lightgray;
+	}
+
+	.button:active {
+		background-color: darkgray;
+		transform: scale(0.98);
+	}
+
+	.result {
+		border-radius: 0.5rem;
+		font-size: 30px;
+		border: 1px solid lightgray;
+		font-family: sans-serif, Helvetica;
+		min-height: 1em;
+		max-height: 3em;
+		grid-column-start: 1;
+		grid-column-end: -2;
+		align-items: center;
+		flex-direction: row-reverse;
+		display: flex;
+		padding: 0.5em;
+		overflow: auto;
+	}
+
+	p {
+		font-size: 20px;
+		max-width: 360px;
+		font-family: Helvetica, sans-serif;
+	}
+</style>
+
+<body>
+	<p>This calculator its code and lots of comments are made for example and for teaching purposes only</p>
+	<div class="container">
+		<div class="result">0</div>
+		<div class="button reset">C</div>
+		<div class="button number">7</div>
+		<div class="button number">8</div>
+		<div class="button number">9</div>
+		<div class="button operation">+</div>
+		<div class="button number">4</div>
+		<div class="button number">5</div>
+		<div class="button number">6</div>
+		<div class="button operation">-</div>
+		<div class="button number">1</div>
+		<div class="button number">2</div>
+		<div class="button number">3</div>
+		<div class="button operation">*</div>
+		<div class="button number">0</div>
+		<div class="button number">.</div>
+		<div class="button equal">=</div>
+		<div class="button operation">/</div>
+	</div>
+	<script src='./index.js'>
+
+	</script>
+</body>
+
+</html>
