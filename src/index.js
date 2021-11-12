@@ -10,7 +10,8 @@ const result = document.querySelector(".result");
 
 const keys = [...operations,...numbers, equal,reset,result];
 
-console.table(keys);
+//console.log(keys[0].classList[1]);
+
 // First input value
 let first = "";
 // Second input value after the operation
@@ -35,8 +36,27 @@ const OPERATIONS = {
   "/": (first, second) => Big(first).div(Big(second))
 };
 
-operations.forEach(operation =>{
-  
+
+keys.forEach(key =>{
+  key.addEventListener("click", e => {
+  let typeElement = key.classList[1];
+      switch (typeElement) {
+        case "operation":
+          operationListener(e);
+          break;
+          case "number":
+            numberListener(e);
+          break;
+          case "equal":
+            equalListener();
+            break; 
+          case "reset":
+            resetListener();
+            break;   
+        default:
+          break;
+      }
+    })
 });
 
 
@@ -59,6 +79,11 @@ const getResults = () => {
 
 operations.forEach(operation =>
   operation.addEventListener("click", e => {
+
+  })
+);
+
+function operationListener (e) {
     // This is to reset case when 20 + 5 = 25 and each click on = will do +5 operation
     prevSecond = undefined;
     // We get an operation using obj['field'] notation to access field
@@ -79,8 +104,7 @@ operations.forEach(operation =>
       action = operation;
       isFirstDone = true;
     }
-  })
-);
+}
 
 const handleDot = value => {
   if (isFirstInput) {
@@ -95,9 +119,9 @@ const handleDot = value => {
   return value;
 };
 
-// Adding listener to all numbers buttons
-numbers.forEach(number =>
-  number.addEventListener("click", e => {
+
+
+function numberListener (e){
     // This is to reset case when 20 + 5 = 25 and each click on = will do +5 operation
     prevSecond = undefined;
     // we get the digit
@@ -115,11 +139,16 @@ numbers.forEach(number =>
       // don't wait for operation in second value case
       isSecondDone = true;
     }
+}
+// Adding listener to all numbers buttons
+numbers.forEach(number =>
+  number.addEventListener("click", e => {
+
   })
 );
 
-// Adding listener to equal button
-equal.addEventListener("click", () => {
+function equalListener() {
+
   // If both are good values to do an operation both of them will have flag of true
   if (isFirstDone && isSecondDone) {
     prevSecond = second;
@@ -128,10 +157,14 @@ equal.addEventListener("click", () => {
     second = prevSecond;
     getResults();
   }
+}
+// Adding listener to equal button
+equal.addEventListener("click", () => {
+
 });
 
-// Reset everything totally
-reset.addEventListener("click", () => {
+
+function resetListener() {
   first = "";
   second = "";
   isFirstDone = false;
@@ -139,6 +172,11 @@ reset.addEventListener("click", () => {
   result.innerText = "0";
   isFirstInput = true;
   action = undefined;
+}
+// Reset everything totally
+reset.addEventListener("click", () => {
+
 });
 
 console.log("refactorizando codigo");
+console.log("merge request");
