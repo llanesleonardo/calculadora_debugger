@@ -1,4 +1,4 @@
-module.exports function valueAssign(key, operationFun, numberFun, equalFun, resetFun) {
+va = function valueAssign(key, operationFun, numberFun, equalFun, resetFun) {
   switch (key) {
     case '+':
     case '-':
@@ -30,7 +30,7 @@ module.exports function valueAssign(key, operationFun, numberFun, equalFun, rese
   }
 }
 
-module.exports function assignEventListener(
+function assignEventListener(
   keys,
   valueAssign,
   operationListener,
@@ -52,3 +52,5 @@ module.exports function assignEventListener(
   })
   return result.every(v => v === true)
 }
+
+module.exports = va

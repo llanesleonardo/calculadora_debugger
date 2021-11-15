@@ -1,8 +1,8 @@
-const { valueAssign } = require('./helpers')
+const va = require('./helpers')
 
 describe('test calculator', () => {
   test(' test assign eventListener', () => {
-    const result = valueAssign('+', null, null, null)
+    const result = va('+', null, null, null)
     expect(result).toBeTruthy()
   })
 })
