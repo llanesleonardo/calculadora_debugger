@@ -1,4 +1,4 @@
-const va = require('./helpers')
+const { va } = require('./helpers')
 
 describe('test calculator', () => {
   test(' test assign eventListener', () => {

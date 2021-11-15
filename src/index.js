@@ -1,4 +1,4 @@
-import { valueAssign, assignEventListener } from './helpers'
+const { valueAssign, assignEventListener } = require('./helpers')
 // Notes:
 // You can add markup, add classes etc. with no problem. Your goal is to make it work no matter how ugly it will look :)
 // Remember about object['fieldName'] access, that function can be passed around etc. This may help you solve this task.
@@ -44,6 +44,26 @@ const valueListener = assignEventListener(
   resetListener
 )
 
+function numberListener(keyValue) {
+  // This is to reset case when 20 + 5 = 25 and each click on = will do +5 operation
+  prevSecond = undefined
+  // we get the digit
+  let aDigit = keyValue
+  aDigit = handleDot(aDigit, isFirstInput)
+  // If it was validated correctly we can proceed with input of it
+  if (!isFirstDone) {
+    first = first + aDigit
+    result.innerText = first
+    // If first value was already done we proceed with same logic for second value
+  } else {
+    second = second + aDigit
+    result.innerText = second
+    // After first valid value was passed to second, we can make it done, cause we
+    // don't wait for operation in second value case
+    isSecondDone = true
+  }
+}
+
 function operationListener(keyValue) {
   // This is to reset case when 20 + 5 = 25 and each click on = will do +5 operation
   prevSecond = undefined
@@ -64,26 +84,6 @@ function operationListener(keyValue) {
   if (isFirstDone || !isFirstInput) {
     action = operation
     isFirstDone = true
-  }
-}
-
-function numberListener(keyValue) {
-  // This is to reset case when 20 + 5 = 25 and each click on = will do +5 operation
-  prevSecond = undefined
-  // we get the digit
-  let aDigit = keyValue
-  aDigit = handleDot(aDigit, isFirstInput)
-  // If it was validated correctly we can proceed with input of it
-  if (!isFirstDone) {
-    first = first + aDigit
-    result.innerText = first
-    // If first value was already done we proceed with same logic for second value
-  } else {
-    second = second + aDigit
-    result.innerText = second
-    // After first valid value was passed to second, we can make it done, cause we
-    // don't wait for operation in second value case
-    isSecondDone = true
   }
 }
 
