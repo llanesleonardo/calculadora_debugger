@@ -93,6 +93,10 @@ and change the main prop in your package.json :
 
 Refs: [parcel](https://parceljs.org/recipes/debugging/)
 
+# JEST
+
+[cheat sheet](https://devhints.io/jest)
+
 ## Credits
 
 Made with [createapp.dev](https://createapp.dev/)
