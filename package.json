@@ -2,7 +2,7 @@
   "name": "debugger-0",
   "version": "1.0.0",
   "description": "debugger example vanilla javascript",
-  "main": "index.html",
+  "main": "src/index.html",
   "keywords": [],
   "author": "",
   "license": "ISC",
