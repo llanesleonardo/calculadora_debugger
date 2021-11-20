@@ -1,4 +1,3 @@
-const { valueAssign, assignEventListener } = require('./helpers')
 // Notes:
 // You can add markup, add classes etc. with no problem. Your goal is to make it work no matter how ugly it will look :)
 // Remember about object['fieldName'] access, that function can be passed around etc. This may help you solve this task.
@@ -10,22 +9,8 @@ const reset = document.querySelector('.reset')
 const result = document.querySelector('.result')
 
 const keys = [...operations, ...numbers, equal, reset, result]
-console.table(keys)
-// First input value
-let first = ''
-// Second input value after the operation
-let second = ''
-// Saved value of second, when equals was pressed to have 25 + 5 = 30 = 35 = 40 = 45 functionality
-let prevSecond = ''
-// When first number is filled in, and operation is chosen this fill be true
-let isFirstDone = false
-// When first input this flag helps to add 0. when . was clicked as first thing
-let isFirstInput = true
-// When first number was given to second variable, this becomes done since we don't wait for operation
-let isSecondDone = false
 
-// variable to memorize operation function, to call it afterwards
-let action
+//console.table(keys)
 
 // Map/Object of the operations that calc can perform.
 const OPERATIONS = {
@@ -35,106 +20,155 @@ const OPERATIONS = {
   '/': (first, second) => Big(first).div(Big(second))
 }
 
-const valueListener = assignEventListener(
-  keys,
-  valueAssign,
-  operationListener,
-  numberListener,
-  equalListener,
-  resetListener
-)
+main(keys, OPERATIONS, result)
 
-function numberListener(keyValue) {
-  // This is to reset case when 20 + 5 = 25 and each click on = will do +5 operation
-  prevSecond = undefined
-  // we get the digit
-  let aDigit = keyValue
-  aDigit = handleDot(aDigit, isFirstInput)
+function main(keys, OPERATIONS, result) {
+  // First input value
+  let firstValue = ''
+  // Second input value after the operation
+  let secondValue = ''
+  // Saved value of second, when equals was pressed to have 25 + 5 = 30 = 35 = 40 = 45 functionality
+  let prevSecond = ''
+  // When first number is filled in, and operation is chosen this fill be true
+  let isFirstDone = false
+  // When first input this flag helps to add 0. when . was clicked as first thing
+  let isFirstInput = true
+  // When first number was given to second variable, this becomes done since we don't wait for operation
+  let isSecondDone = false
+
+  keys.map(key => {
+    key.addEventListener('click', event => {
+      let valuer = valueKeyHandler(
+        key.innerText,
+        OPERATIONS,
+        event,
+        firstValue,
+        secondValue,
+        result,
+        prevSecond,
+        isFirstDone,
+        isFirstInput,
+        isSecondDone
+      )
+      console.log(valuer)
+    })
+  })
+}
+
+function valueKeyHandler(
+  key,
+  OPERATIONS,
+  e,
+  first,
+  second,
+  result,
+  prevSecond,
+  isFirstDone,
+  isFirstInput,
+  isSecondDone
+) {
+  let operationHandler_eraseSecond
+  let getFunOperation
+  let OperationDone
+  let handleDecimal = null
+  let OneOrSecondVerifyValue
+  let evaluateSecondOperation
+  let OperationInProgressFlag
+  let getValue
+
+  switch (key) {
+    case '+':
+    case '-':
+    case '*':
+    case '/':
+      operationHandler_eraseSecond = prevSecond => (prevSecond = undefined)
+      getFunOperation = (e, OPERATIONS) => OPERATIONS[e.target.innerText]
+      OperationDone = operationHandler(isFirstDone, isSecondDone, isFirstInput)
+      OperationInProgressFlag = OperationInProgress(OperationDone, isFirstDone, isFirstInput)
+      getValue = getResultsValue(OperationDone, getFunOperation, first, second, result)
+      first = getValue
+      return getValue
+    case '0':
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+    case '.':
+      operationHandler_eraseSecond = prevSecond => (prevSecond = undefined)
+      handleDecimal = handleDot(e.target.innerText, isFirstInput, OperationInProgressFlag)
+      changeFirstInput = handleDecimal => (handleDecimal !== null ? false : true)
+      evaluateSecondOperation = OperationInProgressFlag =>
+        OperationInProgressFlag === true ? (isSecondDone = false) : (isSecondDone = true)
+      OneOrSecondVerifyValue = OneOrSecondVerify(
+        e.target.innerText,
+        OperationInProgress,
+        first,
+        second
+      )
+      return OneOrSecondVerifyValue
+    case '=':
+      //   equalFun()
+      return true
+    case 'C':
+      // resetFun()
+      return true
+    default:
+      return false
+  }
+}
+
+function OneOrSecondVerify(value, isFirstDone, first, second) {
   // If it was validated correctly we can proceed with input of it
   if (!isFirstDone) {
-    first = first + aDigit
+    first = first + value
     result.innerText = first
     // If first value was already done we proceed with same logic for second value
   } else {
-    second = second + aDigit
+    second = second + value
     result.innerText = second
-    // After first valid value was passed to second, we can make it done, cause we
-    // don't wait for operation in second value case
-    isSecondDone = true
   }
+  return result
 }
 
-function operationListener(keyValue) {
-  // This is to reset case when 20 + 5 = 25 and each click on = will do +5 operation
-  prevSecond = undefined
-  // We get an operation using obj['field'] notation to access field
-  const operation = OPERATIONS[keyValue]
-  // if both are done and operation is clicked again
-  // we get results using prev operation (as if we click = ) and then we change an operation
-  if (isFirstDone && isSecondDone) {
-    getResults(first, second, result, isFirstDone, isSecondDone)
-    action = operation
-    // This return is to avoid code at the bottom from execution
-    return
-  }
-  // if First is valid means we can safely choose operation, and set first as done
-
-  // Here we assign function we do not call it like operation(). It's done to save it and execute later
-  // in getResult
-  if (isFirstDone || !isFirstInput) {
-    action = operation
-    isFirstDone = true
-  }
-}
-
-function equalListener() {
-  // If both are good values to do an operation both of them will have flag of true
-  if (isFirstDone && isSecondDone) {
-    prevSecond = second
-    getResults(first, second, result, isFirstDone, isSecondDone, action)
-    console.log(getResults)
-  } else if (isFirstDone && prevSecond) {
-    second = prevSecond
-    getResults(first, second, result, isFirstDone, isSecondDone, action)
-  }
-}
-
-function resetListener() {
-  first = ''
-  second = ''
-  isFirstDone = false
-  isSecondDone = false
-  result.innerText = '0'
-  isFirstInput = true
-  action = undefined
-}
-
-// Function to get results calculated and displayed.
-const getResults = () => {
+function getResultsValue(OperationDone, getFunOperation, first, second, result) {
   // We make a result first value
-  first = action(first, second)
-  result.innerText = first
-  // Resetting second
-  second = ''
-  // Reseting all second value related flags to initial state
-  isFirstInput = true
-  isSecondDone = false
-  // All those actions basically makes us to point where first value is filled
-  // and operation is to be changed, or to be kept if we want to continue doing same thing
-  // first oper second  equal first oper ---> oper/second
-  // 5     +    10      =     15    +    <--- we can keep this operation or change
-  // Hence can be continued like 15 - 8 = 7 if we change oper, or 15 + 5 = 20 if we doesn't
+  if (OperationDone) {
+    first = getFunOperation(first, second)
+    result.innerText = first
+  }
+
+  return result
 }
 
-const handleDot = value => {
+function operationHandler(isFirstDone, isSecondDone, isFirstInput) {
+  if (isFirstDone && isSecondDone) {
+    return true
+  }
+  return false
+}
+
+function OperationInProgress(OperationDone, isFirstDone, isFirstInput) {
+  if (!OperationDone) {
+    if (isFirstDone || !isFirstInput) {
+      isFirstDone = true
+
+      return isFirstDone
+    }
+  }
+  return false
+}
+
+const handleDot = (value, isFirstInput, isFirstDone) => {
   if (isFirstInput) {
-    isFirstInput = false
     return value !== '.' ? value : '0.'
   }
   if (isFirstDone && isFirstInput) {
-    isFirstInput = false
     return value !== '.' ? value : '0.'
   }
-  isFirstInput = false
   return value
 }
