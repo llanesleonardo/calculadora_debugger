@@ -1,174 +1,96 @@
-// Notes:
-// You can add markup, add classes etc. with no problem. Your goal is to make it work no matter how ugly it will look :)
-// Remember about object['fieldName'] access, that function can be passed around etc. This may help you solve this task.
-
 const operations = document.querySelectorAll('.operation')
 const numbers = document.querySelectorAll('.number')
 const equal = document.querySelector('.equal')
 const reset = document.querySelector('.reset')
 const result = document.querySelector('.result')
 
-const keys = [...operations, ...numbers, equal, reset, result]
+export const keys = [...operations, ...numbers, equal, reset, result]
+/* calculator in javascript using functional programming principles */
+export const operators = ['+', '*', '-', '/']
 
-//console.table(keys)
-
-// Map/Object of the operations that calc can perform.
-const OPERATIONS = {
-  '+': (first, second) => Big(first).plus(Big(second)),
-  '-': (first, second) => Big(first).minus(Big(second)),
-  '*': (first, second) => Big(first).times(Big(second)),
-  '/': (first, second) => Big(first).div(Big(second))
+export const formulas = {
+  '/': (a, b) => a / b,
+  '*': (a, b) => a * b,
+  '+': (a, b) => a + b,
+  '-': (a, b) => a - b
 }
 
-main(keys, OPERATIONS, result)
+export let valuesCalc = []
 
-function main(keys, OPERATIONS, result) {
-  // First input value
-  let firstValue = ''
-  // Second input value after the operation
-  let secondValue = ''
-  // Saved value of second, when equals was pressed to have 25 + 5 = 30 = 35 = 40 = 45 functionality
-  let prevSecond = ''
-  // When first number is filled in, and operation is chosen this fill be true
-  let isFirstDone = false
-  // When first input this flag helps to add 0. when . was clicked as first thing
-  let isFirstInput = true
-  // When first number was given to second variable, this becomes done since we don't wait for operation
-  let isSecondDone = false
+export const isOperator = valueEvent => operators.includes(valueEvent)
+export const checkLastItem = newArray => isOperator(newArray[newArray.length - 1])
 
-  keys.map(key => {
-    key.addEventListener('click', event => {
-      let valuer = valueKeyHandler(
-        key.innerText,
-        OPERATIONS,
-        event,
-        firstValue,
-        secondValue,
-        result,
-        prevSecond,
-        isFirstDone,
-        isFirstInput,
-        isSecondDone
-      )
-      console.log(valuer)
-    })
-  })
-}
-
-function valueKeyHandler(
-  key,
-  OPERATIONS,
-  e,
-  first,
-  second,
-  result,
-  prevSecond,
-  isFirstDone,
-  isFirstInput,
-  isSecondDone
-) {
-  let operationHandler_eraseSecond
-  let getFunOperation
-  let OperationDone
-  let handleDecimal = null
-  let OneOrSecondVerifyValue
-  let evaluateSecondOperation
-  let OperationInProgressFlag
-  let getValue
-
-  switch (key) {
-    case '+':
-    case '-':
-    case '*':
-    case '/':
-      operationHandler_eraseSecond = prevSecond => (prevSecond = undefined)
-      getFunOperation = (e, OPERATIONS) => OPERATIONS[e.target.innerText]
-      OperationDone = operationHandler(isFirstDone, isSecondDone, isFirstInput)
-      OperationInProgressFlag = OperationInProgress(OperationDone, isFirstDone, isFirstInput)
-      getValue = getResultsValue(OperationDone, getFunOperation, first, second, result)
-      first = getValue
-      return getValue
-    case '0':
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-    case '.':
-      operationHandler_eraseSecond = prevSecond => (prevSecond = undefined)
-      handleDecimal = handleDot(e.target.innerText, isFirstInput, OperationInProgressFlag)
-      changeFirstInput = handleDecimal => (handleDecimal !== null ? false : true)
-      evaluateSecondOperation = OperationInProgressFlag =>
-        OperationInProgressFlag === true ? (isSecondDone = false) : (isSecondDone = true)
-      OneOrSecondVerifyValue = OneOrSecondVerify(
-        e.target.innerText,
-        OperationInProgress,
-        first,
-        second
-      )
-      return OneOrSecondVerifyValue
-    case '=':
-      //   equalFun()
-      return true
-    case 'C':
-      // resetFun()
-      return true
-    default:
-      return false
-  }
-}
-
-function OneOrSecondVerify(value, isFirstDone, first, second) {
-  // If it was validated correctly we can proceed with input of it
-  if (!isFirstDone) {
-    first = first + value
-    result.innerText = first
-    // If first value was already done we proceed with same logic for second value
-  } else {
-    second = second + value
-    result.innerText = second
-  }
-  return result
-}
-
-function getResultsValue(OperationDone, getFunOperation, first, second, result) {
-  // We make a result first value
-  if (OperationDone) {
-    first = getFunOperation(first, second)
-    result.innerText = first
-  }
-
-  return result
-}
-
-function operationHandler(isFirstDone, isSecondDone, isFirstInput) {
-  if (isFirstDone && isSecondDone) {
-    return true
-  }
-  return false
-}
-
-function OperationInProgress(OperationDone, isFirstDone, isFirstInput) {
-  if (!OperationDone) {
-    if (isFirstDone || !isFirstInput) {
-      isFirstDone = true
-
-      return isFirstDone
+keys.map(key => {
+  key.addEventListener('click', e => {
+    let resultDiv = result
+    let EventArray = [e.target.innerText]
+    main(resultDiv, EventArray, valuesCalc)
+    let lastItemArray
+    console.log(valuesCalc)
+    if (EventArray[0] !== '=') {
+      valuesCalc = concatValues(valuesCalc, EventArray[0])
+      lastItemArray = valuesCalc[valuesCalc.length - 1]
+      resultDiv.innerText =
+        isOperator(lastItemArray) === true ? valuesCalc[valuesCalc.length - 2] : lastItemArray
+    } else {
+      console.log(EventArray[0])
+      let currentValueCalc = resultDiv.innerText
+      let doTheCalc
+      doTheCalc = valuesCalc.length !== 0 ? operateProcess(valuesCalc) : currentValueCalc // envia el valor final de las operaciones al dar click en "="
+      resultDiv.innerText = doTheCalc
+      valuesCalc = []
     }
+    // main(resultDiv, EventArray, valuesCalc)
+  })
+})
+
+export const main = (resultDiv, EventArray, valuesCalc) => {
+  console.log('resultDiv', resultDiv)
+  console.log('EventArray', EventArray)
+  console.log('valuesCalc', valuesCalc)
+}
+//TODO si le aplasto igual debe de saber si existe un operando
+
+export const concatValues = (valuesCalculator, calculationValues) => {
+  const newArray = [...valuesCalculator]
+  let isAnOperator = isOperator(calculationValues)
+  if (newArray.length >= 1 && isAnOperator === false) {
+    // Si es numero
+    let findOperando = checkLastItem(newArray) //si este numero tiene un operador a la izquerda
+    let LastItemArray = newArray[newArray.length - 1]
+    let otherArray = [...newArray]
+
+    return findOperando === true
+      ? newArray.concat(calculationValues)
+      : (otherArray = [
+          ...newArray.splice(0, newArray.length - 1),
+          LastItemArray + calculationValues
+        ])
   }
-  return false
+  if (newArray.length >= 1 && isAnOperator) return newArray.concat(calculationValues) // si es operador
+  return isAnOperator === true ? newArray : newArray.concat(calculationValues)
 }
 
-const handleDot = (value, isFirstInput, isFirstDone) => {
-  if (isFirstInput) {
-    return value !== '.' ? value : '0.'
-  }
-  if (isFirstDone && isFirstInput) {
-    return value !== '.' ? value : '0.'
-  }
-  return value
+export const operateProcess = valuesCalc1 => {
+  if (valuesCalc1.length === 1) return valuesCalc1[0]
+  return operateProcess(calculateResult(valuesCalc1, findOperator(valuesCalc1)))
+}
+
+export const findOperator = valuesCalc2 => {
+  // console.log('valuesCalc2', valuesCalc2)
+  const nextIndex = valuesCalc2.findIndex(value => value === '*' || value === '/')
+  return nextIndex !== -1
+    ? nextIndex
+    : valuesCalc2.findIndex(value => value === '-' || value === '+')
+}
+
+export const calculateResult = (valuesCalc3, index) => {
+  if (index === -1) return valuesCalc3
+  const resultFromFormulas = formulas[valuesCalc3[index]](
+    +valuesCalc3[index - 1],
+    +valuesCalc3[index + 1]
+  )
+  return valuesCalc3
+    .map((item, jindex) => (index - 1 === jindex ? resultFromFormulas : item))
+    .filter((item, jindex) => jindex < index || jindex > index + 1)
 }
