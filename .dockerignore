@@ -1,0 +1,9 @@
+.gitlab-ci.yml
+.dockerignore
+.github
+.git
+.gitignore
+/generator/modules
+/generator/log.*
+/out
+/node_modules/
