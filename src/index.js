@@ -27,18 +27,22 @@ keys.map(key => {
     main(resultDiv, EventArray, valuesCalc)
     let lastItemArray
     console.log(valuesCalc)
-    if (EventArray[0] !== '=') {
-      valuesCalc = concatValues(valuesCalc, EventArray[0])
-      lastItemArray = valuesCalc[valuesCalc.length - 1]
-      resultDiv.innerText =
-        isOperator(lastItemArray) === true ? valuesCalc[valuesCalc.length - 2] : lastItemArray
-    } else {
+    if (EventArray[0] === '=') {
       console.log(EventArray[0])
       let currentValueCalc = resultDiv.innerText
       let doTheCalc
       doTheCalc = valuesCalc.length !== 0 ? operateProcess(valuesCalc) : currentValueCalc // envia el valor final de las operaciones al dar click en "="
       resultDiv.innerText = doTheCalc
       valuesCalc = []
+    } else if (EventArray[0] === 'C') {
+      console.log(EventArray[0])
+      resultDiv.innerText = 0
+      valuesCalc = []
+    } else {
+      valuesCalc = concatValues(valuesCalc, EventArray[0])
+      lastItemArray = valuesCalc[valuesCalc.length - 1]
+      resultDiv.innerText =
+        isOperator(lastItemArray) === true ? valuesCalc[valuesCalc.length - 2] : lastItemArray
     }
     // main(resultDiv, EventArray, valuesCalc)
   })
