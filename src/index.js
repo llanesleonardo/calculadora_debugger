@@ -1,20 +1,23 @@
+// Extración de objetos DIV HTML de la interfaz del navegador
 const operations = document.querySelectorAll('.operation')
 const numbers = document.querySelectorAll('.number')
 const equal = document.querySelector('.equal')
 const reset = document.querySelector('.reset')
 const result = document.querySelector('.result')
 
+// Combinar todos los elementos div en un arreglo para su mejor manejo
 export const keys = [...operations, ...numbers, equal, reset, result]
 /* calculator in javascript using functional programming principles */
+// definir en un array cuales son los operandos para usarse en la calculadora
 export const operators = ['+', '*', '-', '/']
-
+// definir en un arreglo de objetos segun el operando que  función utilizará la calculadora
 export const formulas = {
   '/': (a, b) => a / b,
   '*': (a, b) => a * b,
   '+': (a, b) => a + b,
   '-': (a, b) => a - b
 }
-
+// definir un arreglo que tendra los valores transitorios
 export let valuesCalc = []
 
 export const isOperator = valueEvent => operators.includes(valueEvent)
